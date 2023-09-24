@@ -1,0 +1,9 @@
+ {
+    "store":{
+        "store.dispatch()":"",
+        "store.getState()":"",
+        "createStore(reducer)":"",
+        "store.subscribe()":""
+    }
+
+}
