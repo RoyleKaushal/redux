@@ -14,6 +14,12 @@ const getAccUserPending="account/getUser/pending";
 const getAccUserFullfilled="account/getUser/fullfilled";
 const getAccUserRejected="account/getUser/rejected";
 
+
+const setUsDetPending='updateDetailPending';
+const setUsDetFullfilled='updateDetailFullfilled';
+const setUsDetRejected='updateDetailRejected';
+
+
 const incBonus="bonus/increment"
 
 //functions for Action (Action creators)
@@ -28,6 +34,31 @@ function getAccountUserPending(){
 function getAccountUserRejected(error){
     return {type:getAccUserRejected,error:error}
 }
+function setUserDetailsFullfilled(value){
+    return {type:setUsDetFullfilled,payload:value}
+}
+function setUserDetailsPending(){
+    return {type:setUsDetPending}
+}
+function setUserDetailsRejected(error){
+    return {type:setUsDetRejected,error:error}
+}
+
+function setUserDeatils(data){
+    return async(dispatch,getState)=>{
+        try{
+            dispatch(setUserDetailsPending())
+            const res=await axios({url:"https://dummy.restapiexample.com/api/v1/create",method:"POST",body:JSON.stringify(data)})
+            
+            
+            dispatch(setUserDetailsFullfilled(res.data));
+
+        }catch(error){
+            dispatch(setUserDetailsRejected(error))
+        }
+    }
+}
+
  function getUserAccount(id){
     return async(dispatch,getState)=>{
         try{
@@ -79,18 +110,32 @@ const bonusReducer=(state={points:1},action)=>{
         
         default: return state
 }}
-const store=createStore(combineReducers({
-    account:accountReducer,
-    bonus:bonusReducer
-}),applyMiddleware(logger.default,thunk.default));
 
+const updateReducer=(state=
+    {"name":"test","salary":"1203","age":"13"}
+  ,action)=>{
+    switch(action.type){
+        case setUsDetFullfilled:
+            
+            return {...action.payload.data,loading:false};
+        case setUsDetPending: return {...state,loading:true};
+        case setUsDetRejected: return {...action.error,loading:false}
+
+    }
+  }
+
+const store=createStore(updateReducer,applyMiddleware(logger.default,thunk.default));
+// const store=createStore(combineReducers({
+//     account:accountReducer,
+//     bonus:bonusReducer
+// }),applyMiddleware(logger.default,thunk.default));
 
 // store.subscribe(()=>{
 //     history.push(store.getState())
 //     console.log(history);
 // })
 setTimeout(()=>{
-    store.dispatch(getUserAccount(30));
+    store.dispatch(setUserDeatils({"name":"test","salary":"123","age":"23"}));
     // store.dispatch(incrementByAmount(20))
     // store.dispatch(incrementBonus())
 
